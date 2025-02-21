@@ -23,7 +23,7 @@ jobs:
         password: ${{ github.token }}
 
     - name: build and push Docker image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         load: true
         tags: ghcr.io/${{ github.repository }}:ci
@@ -54,7 +54,7 @@ jobs:
         echo "tag=$geoserver_version" >>$GITHUB_OUTPUT
 
     - name: build and push Docker image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         push: true
         tags: ghcr.io/${{ github.repository }}:${{ steps.docker-tags.outputs.tag }}
