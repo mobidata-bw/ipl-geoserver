@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   build-publish:
@@ -56,7 +57,7 @@ jobs:
     - name: build and push Docker image
       uses: docker/build-push-action@v6
       with:
-        push: true
+        push: ${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
         tags: ghcr.io/${{ github.repository }}:${{ steps.docker-tags.outputs.tag }}
         platforms: linux/amd64
         # https://docs.docker.com/build/ci/github-actions/cache/#cache-backend-api
