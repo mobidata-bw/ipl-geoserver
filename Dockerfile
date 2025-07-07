@@ -1,4 +1,4 @@
-FROM geosolutionsit/geoserver:2.27.1@sha256:7b24cc450adf147c2e4c18c4f9e390b679cde1f05d7ca7e27d4d2b099bc20ab9
+FROM geosolutionsit/geoserver:2.27.1@sha256:b137aaf5c00a9e8d7758027425917dba6dde72ea64352afaf44b20fff7e291ab
 
 LABEL org.opencontainers.image.title="Geoserver"
 LABEL org.opencontainers.image.description="Geoserver, customized with additional plugins for the MobiData BW IPL"
