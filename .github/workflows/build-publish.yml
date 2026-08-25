@@ -28,8 +28,7 @@ jobs:
       with:
         load: true
         tags: ghcr.io/${{ github.repository }}:ci
-        # todo: add linux/arm64 once it is supported by the upstream/base image
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
         # https://docs.docker.com/build/ci/github-actions/cache/#cache-backend-api
         cache-from: type=gha
         cache-to: type=gha,mode=max
@@ -46,6 +45,7 @@ jobs:
         # https://stackoverflow.com/a/12524345/1072129
         geoserver_version="$(
           docker run --rm \
+            --entrypoint '' \
             'ghcr.io/${{ github.repository }}:ci' \
             /bin/cat \
             /usr/local/tomcat/webapps/geoserver/META-INF/maven/org.geoserver.web/gs-web-app/pom.properties \
