@@ -46,6 +46,7 @@ jobs:
         # https://stackoverflow.com/a/12524345/1072129
         geoserver_version="$(
           docker run --rm \
+            --entrypoint '' \
             'ghcr.io/${{ github.repository }}:ci' \
             /bin/cat \
             /usr/local/tomcat/webapps/geoserver/META-INF/maven/org.geoserver.web/gs-web-app/pom.properties \
