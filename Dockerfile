@@ -12,7 +12,19 @@ ENV SKIP_DEMO_DATA=true
 ARG STABLE_EXTENSIONS='vectortiles,inspire,ogcapi-features'
 ENV STABLE_EXTENSIONS=${STABLE_EXTENSIONS}
 
+# todo: remove debugging commands
+RUN sed -i -e "2i set -x" /opt/install-extensions.sh
+RUN sed -i -e "2i env | sort" /opt/install-extensions.sh
+
 # We don't want to run the container with `INSTALL_EXTENSIONS=true`.
 # todo: /opt/install-extensions.sh doesn't download them, but still unpacks them *again* during runtime
 ENV INSTALL_EXTENSIONS=false
 RUN env INSTALL_EXTENSIONS=true /opt/install-extensions.sh
+
+# todo: remove debugging commands
+RUN ls -alh /usr/local/tomcat/webapps/geoserver/WEB-INF/lib/
+
+# todo: remove debugging commands
+RUN sed -i -e "2i id" /opt/startup.sh
+RUN sed -i -e "2i set -x" /opt/startup.sh
+RUN sed -i -e "2i set -x" /usr/local/tomcat/bin/catalina.sh
