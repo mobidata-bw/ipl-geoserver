@@ -3,7 +3,7 @@ name: build & publish Docker image
 on:
   push:
     branches:
-      - main
+      - '*'
   pull_request:
 
 jobs:
@@ -53,12 +53,16 @@ jobs:
             | sed '/^version=/!d; s///' | tr -d '\n'
         )"
 
-        echo "tag=$geoserver_version" >>$GITHUB_OUTPUT
+        if [ '${{ github.ref_name }}' = '${{ github.event.repository.default_branch }}' ]; then
+          echo "tag=$geoserver_version" >>$GITHUB_OUTPUT
+        else
+          echo "tag=branch_${{ github.ref_name }}" >>$GITHUB_OUTPUT
+        fi
 
     - name: build and push Docker image
       uses: docker/build-push-action@v7
       with:
-        push: ${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+        push: ${{ github.event_name == 'push' }}
         tags: ghcr.io/${{ github.repository }}:${{ steps.docker-tags.outputs.tag }}
         platforms: linux/amd64
         # https://docs.docker.com/build/ci/github-actions/cache/#cache-backend-api
