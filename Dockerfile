@@ -17,3 +17,7 @@ ENV STABLE_EXTENSIONS=${STABLE_EXTENSIONS}
 # see https://github.com/geoserver/docker/pull/102
 ENV INSTALL_EXTENSIONS=false
 RUN env INSTALL_EXTENSIONS=true /opt/install-extensions.sh
+
+# add our own entrypoint script that wraps the upstream one
+ADD ./entrypoint.sh /opt/entrypoint.sh
+ENTRYPOINT [ "/opt/entrypoint.sh" ]
