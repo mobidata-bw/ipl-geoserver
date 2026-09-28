@@ -37,3 +37,15 @@ RUN sed -i -e "2i set -x" /usr/local/tomcat/bin/catalina.sh
 # todo: contribute upstream!
 RUN sed -i -e "2i set -eo pipefail" /opt/startup.sh
 RUN sed -i -e "2i set -u" /opt/startup.sh
+
+# # Note: Hard-coded to match how we run IPL in production. :/
+# USER 1000:1000
+
+# RUN \
+# 	--mount=type=tmpfs,dst=/usr/local/tomcat/bin/catalina.sh \
+# 	set -euxo pipefail && \
+# 	ls -ahl /usr/local/tomcat/bin && \
+# 	echo '#!/bin/sh' >/usr/local/tomcat/bin/catalina.sh && \
+# 	chmod +x /usr/local/tomcat/bin/catalina.sh && \
+# 	todo: `env USER_TODO=TODO`?
+# 	/opt/startup.sh
