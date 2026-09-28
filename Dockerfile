@@ -5,6 +5,13 @@ LABEL org.opencontainers.image.description="Geoserver, customized with additiona
 LABEL org.opencontainers.image.authors="MobiData BW IPL contributors <mobidata-bw@nvbw.de>"
 LABEL org.opencontainers.image.source="https://github.com/mobidata-bw/ipl-geoserver"
 
+RUN \
+	--mount=type=cache,target=/var/cache/apt,sharing=locked \
+	--mount=type=cache,target=/var/lib/apt,sharing=locked \
+	apt update \
+	&& apt install -y --no-install-recommends \
+	rsync
+
 # https://github.com/geoserver/docker/blob/68a2144f863cba741de05fb6ed58738a7ddc0e77/README.md#how-to-start-a-geoserver-without-sample-data
 ENV SKIP_DEMO_DATA=true
 
@@ -17,3 +24,7 @@ ENV STABLE_EXTENSIONS=${STABLE_EXTENSIONS}
 # see https://github.com/geoserver/docker/pull/102
 ENV INSTALL_EXTENSIONS=false
 RUN env INSTALL_EXTENSIONS=true /opt/install-extensions.sh
+
+# add our own entrypoint script that wraps the upstream one
+ADD ./entrypoint.sh /opt/entrypoint.sh
+ENTRYPOINT [ "/opt/entrypoint.sh" ]
