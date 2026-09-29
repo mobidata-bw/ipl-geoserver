@@ -1,4 +1,5 @@
-FROM docker.osgeo.org/geoserver:2.28.5
+# todo: switch to version-pinned image, otherwise `/usr/local/tomcat/webapps/geoserver/META-INF/maven/org.geoserver.web/gs-web-app/pom.properties` contains a SNAPSHOT version
+FROM docker.osgeo.org/geoserver:3.1.x
 
 LABEL org.opencontainers.image.title="Geoserver"
 LABEL org.opencontainers.image.description="Geoserver, customized with additional plugins for the MobiData BW IPL"
