@@ -1,4 +1,4 @@
-FROM docker.osgeo.org/geoserver:2.28.5
+FROM docker.osgeo.org/geoserver:3.1.x
 
 LABEL org.opencontainers.image.title="Geoserver"
 LABEL org.opencontainers.image.description="Geoserver, customized with additional plugins for the MobiData BW IPL"
