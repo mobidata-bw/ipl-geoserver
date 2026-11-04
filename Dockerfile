@@ -1,3 +1,4 @@
+# todo: switch to version-pinned image, otherwise `/usr/local/tomcat/webapps/geoserver/META-INF/maven/org.geoserver.web/gs-web-app/pom.properties` contains a SNAPSHOT version
 FROM docker.osgeo.org/geoserver:3.1.x
 
 LABEL org.opencontainers.image.title="Geoserver"
@@ -34,9 +35,10 @@ RUN sed -i -e "2i id" /opt/startup.sh
 RUN sed -i -e "2i set -x" /opt/startup.sh
 RUN sed -i -e "2i set -x" /usr/local/tomcat/bin/catalina.sh
 
-# todo: contribute upstream!
-RUN sed -i -e "2i set -eo pipefail" /opt/startup.sh
-RUN sed -i -e "2i set -u" /opt/startup.sh
+# todo: /opt/startup.sh fails if $GEOSERVER_REQUIRE_FILE is unbound, fix this upstream!
+# # todo: contribute upstream!
+# RUN sed -i -e "2i set -eo pipefail" /opt/startup.sh
+# RUN sed -i -e "2i set -u" /opt/startup.sh
 
 # # Note: Hard-coded to match how we run IPL in production. :/
 # USER 1000:1000
