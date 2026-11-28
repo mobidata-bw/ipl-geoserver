@@ -1,15 +1,31 @@
-FROM geosolutionsit/geoserver:2.28.5@sha256:8c930ec29d4e86ebe85103594052b68c7bb563e33b20f043196c539d8fe7187e
+# todo: switch to version-pinned image, otherwise `/usr/local/tomcat/webapps/geoserver/META-INF/maven/org.geoserver.web/gs-web-app/pom.properties` contains a SNAPSHOT version
+FROM docker.osgeo.org/geoserver:3.1.x
 
 LABEL org.opencontainers.image.title="Geoserver"
 LABEL org.opencontainers.image.description="Geoserver, customized with additional plugins for the MobiData BW IPL"
 LABEL org.opencontainers.image.authors="MobiData BW IPL contributors <mobidata-bw@nvbw.de>"
 LABEL org.opencontainers.image.source="https://github.com/mobidata-bw/ipl-geoserver"
 
-# We currently depend on our custom fixed download script.
-# todo: use the upstream one again once https://github.com/geosolutions-it/docker-geoserver/pull/169 is merged
-COPY geoserver-plugin-download.sh /usr/local/bin/geoserver-plugin-download.sh
+RUN \
+	--mount=type=cache,target=/var/cache/apt,sharing=locked \
+	--mount=type=cache,target=/var/lib/apt,sharing=locked \
+	apt update \
+	&& apt install -y --no-install-recommends \
+	rsync
 
-# The upstream Docker image build process is so involved that, instead of using their built-in plugin mechanism while building the "original" image [0], we rather copy the instructions here. Other than us doing this *after* the original image has been built, we strive to follow the upstream design as closely as possible.
-# [0] https://github.com/geosolutions-it/docker-geoserver/blob/fb6a5197b19c60cf9a4b83b440281e2110a021a0/Dockerfile#L46-L50
-ARG PLUG_IN_URLS='https://sourceforge.net/projects/geoserver/files/GeoServer/2.28.5/extensions/geoserver-2.28.5-vectortiles-plugin.zip https://sourceforge.net/projects/geoserver/files/GeoServer/2.28.5/extensions/geoserver-2.28.5-inspire-plugin.zip https://sourceforge.net/projects/geoserver/files/GeoServer/2.28.5/extensions/geoserver-2.28.5-ogcapi-features-plugin.zip'
-RUN /usr/local/bin/geoserver-plugin-download.sh "${CATALINA_BASE}/webapps/geoserver/WEB-INF/lib" ${PLUG_IN_URLS}
+# https://github.com/geoserver/docker/blob/68a2144f863cba741de05fb6ed58738a7ddc0e77/README.md#how-to-start-a-geoserver-without-sample-data
+ENV SKIP_DEMO_DATA=true
+
+# https://github.com/geoserver/docker/blob/68a2144f863cba741de05fb6ed58738a7ddc0e77/README.md#how-to-download-and-install-additional-extensions-on-startup
+ARG STABLE_EXTENSIONS='vectortiles,inspire,ogcapi-features'
+ENV STABLE_EXTENSIONS=${STABLE_EXTENSIONS}
+
+# We don't want to run the container with `INSTALL_EXTENSIONS=true`.
+# todo: /opt/install-extensions.sh doesn't download them, but still unpacks them *again* during runtime
+# see https://github.com/geoserver/docker/pull/102
+ENV INSTALL_EXTENSIONS=false
+RUN env INSTALL_EXTENSIONS=true /opt/install-extensions.sh
+
+# add our own entrypoint script that wraps the upstream one
+ADD ./entrypoint.sh /opt/entrypoint.sh
+ENTRYPOINT [ "/opt/entrypoint.sh" ]
